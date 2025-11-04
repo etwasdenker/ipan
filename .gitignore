@@ -1,3 +1,50 @@
 
 .env
 .env.*
+# build/deps
+node_modules/
+dist/
+build/
+.cache/
+.next/
+.vite/
+**/node_modules/.vite/
+# Assistant snapshots
+_assistant_context/out/
+# env
+.env
+.env.local
+# build/deps
+node_modules/
+dist/
+build/
+.cache/
+.next/
+.vite/
+**/node_modules/.vite/
+# Assistant snapshots
+_assistant_context/out/
+# env
+.env
+.env.local
+
+# Node/Vite
+frontend/ipan/node_modules/
+frontend/ipan/dist/
+# Python venv
+.venv/
+# ENV
+.env
+.env.*
+# OS junk
+.DS_Store
+Thumbs.db
+
+
+_assistant_context/
+Заметки.txt
+
+
+# ignore loose notes at repo root
+/*.txt
+

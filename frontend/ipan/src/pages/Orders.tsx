@@ -1,49 +1,41 @@
-import { Grid, Card, CardContent, Typography, TextField, Button } from '@mui/material'
-import { DataGrid, GridColDef } from '@mui/x-data-grid'
-
-const columns: GridColDef[] = [
-  { field: 'created', headerName: 'Создана', width: 180 },
-  { field: 'number', headerName: 'Номер', width: 120 },
-  { field: 'priority', headerName: 'Приоритет', width: 120 },
-  { field: 'method', headerName: 'Метод', width: 160 },
-  { field: 'stage', headerName: 'Этап', width: 160 },
-  { field: 'site', headerName: 'Сайт', width: 160 },
-  { field: 'org', headerName: 'Организация', width: 220 },
-]
-
-const rows = [
-  { id: 1, created: '01.11.2025, 06:59', number: 'ПЗ5-0063', priority: '3', method: 'Заказ с сайта', stage: 'Новая', site: 'Hatz', org: 'ОМК' },
-  { id: 2, created: '31.10.2025, 13:44', number: 'ТЗ5-0160', priority: '3', method: 'Быстрый заказ', stage: 'Отменена', site: 'Аккумуляторные батареи', org: 'СТ' },
-]
+import { Box, Stack, Typography, TextField, Button, List, ListItemButton, ListItemText } from '@mui/material'
+import SplitPane from '../components/SplitPane'
 
 export default function Orders() {
   return (
-    <Grid container spacing={2}>
-      <Grid item xs={12} md={3}>
-        <Card>
-          <CardContent>
-            <Typography variant="h6" gutterBottom>Фильтр</Typography>
-            <TextField label="Ответственный" fullWidth margin="dense" />
-            <TextField label="Организация" fullWidth margin="dense" />
-            <TextField label="Этап" fullWidth margin="dense" />
-            <TextField label="Приоритет" fullWidth margin="dense" />
-            <TextField label="Период" fullWidth margin="dense" />
-            <TextField label="Теги" fullWidth margin="dense" />
-            <Button variant="contained" sx={{ mt: 1, mr: 1 }}>Применить</Button>
-            <Button variant="outlined" sx={{ mt: 1 }}>Очистить</Button>
-          </CardContent>
-        </Card>
-      </Grid>
-      <Grid item xs={12} md={9}>
-        <Card>
-          <CardContent>
-            <Typography variant="h6" gutterBottom>Заявки</Typography>
-            <div style={{ height: 520, width: '100%' }}>
-              <DataGrid rows={rows} columns={columns} pageSizeOptions={[10, 25, 50]} initialState={{ pagination: { paginationModel: { pageSize: 10 }}}} />
-            </div>
-          </CardContent>
-        </Card>
-      </Grid>
-    </Grid>
+    <Box sx={{ height: '100%' }}>
+      <SplitPane direction="vertical" initial={34} minA={18} minB={30} storageKey="ipan:orders:split" height="100%">
+        <Box sx={{ height: '100%', p: 2, borderRight: '2px solid', borderColor: 'divider' }}>
+          <Typography variant="h6" sx={{ mb: 2 }}>Фильтр</Typography>
+          <Stack spacing={1.25}>
+            <TextField size="small" label="Ответственный" />
+            <TextField size="small" label="Организация" />
+            <TextField size="small" label="Этап" />
+            <TextField size="small" label="Приоритет" />
+            <TextField size="small" label="Период" />
+            <TextField size="small" label="Теги" />
+            <Stack direction="row" spacing={1}>
+              <Button variant="contained">Применить</Button>
+              <Button variant="outlined">Очистить</Button>
+            </Stack>
+          </Stack>
+        </Box>
+
+        <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+          <Box sx={{ px: 2, py: 1.5, borderBottom: '2px solid', borderColor: 'divider' }}>
+            <Typography variant="h6">Заявки</Typography>
+          </Box>
+          <Box sx={{ flex: 1, overflow: 'auto' }}>
+            <List dense disablePadding>
+              {['01.11.2025, 06:59','31.10.2025, 13:44','31.10.2025, 08:36'].map((t, i) => (
+                <ListItemButton key={i} sx={{ px: 2, py: 1, borderBottom: '2px solid', borderColor: 'divider' }}>
+                  <ListItemText primary={t} secondary="Новая · Заказ с сайта · ПМК" />
+                </ListItemButton>
+              ))}
+            </List>
+          </Box>
+        </Box>
+      </SplitPane>
+    </Box>
   )
 }

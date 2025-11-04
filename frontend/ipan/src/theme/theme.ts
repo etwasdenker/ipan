@@ -1,31 +1,54 @@
 import { createTheme } from '@mui/material/styles'
-import { deepmerge } from '@mui/utils'
 
-export const brand = {
-  primary: {
-    main: '#7C3AED',
-    light: '#9F67F6',
-    dark: '#5B21B6',
-    contrastText: '#ffffff'
+/** Единый набор типографики (Pangolin для всего приложения) */
+export const baseTypography = {
+  fontFamily: `'Pangolin', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif`,
+}
+
+/** Общие переопределения для обоих режимов */
+const components = {
+  MuiAppBar: {
+    styleOverrides: {
+      root: {
+        boxShadow: 'none',
+      },
+    },
+  },
+  MuiPaper: {
+    styleOverrides: {
+      root: {
+        boxShadow: 'none',
+      },
+    },
   },
 }
 
-const base = {
-  typography: {
-    fontFamily: ['Inter', 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', 'sans-serif'].join(','),
+/** Тёмная тема */
+export const darkTheme = createTheme({
+  palette: {
+    mode: 'dark',
+    primary: { main: '#7C3AED' }, // фирменный пурпурный
+    background: {
+      default: '#0f1117',
+      paper: '#141722',
+    },
   },
-  shape: { borderRadius: 16 },
-  components: {
-    MuiPaper: { defaultProps: { elevation: 1 } },
-    MuiCard: { styleOverrides: { root: { borderRadius: 20 }}},
-    MuiButton: { styleOverrides: { root: { borderRadius: 14, textTransform: 'none', fontWeight: 600 }}},
-  }
-}
+  shape: { borderRadius: 8 },
+  typography: baseTypography,
+  components,
+})
 
-export const lightTheme = createTheme(deepmerge({
-  palette: { mode: 'light', primary: brand.primary, background: { default: '#f7f7fb', paper: '#ffffff' } },
-}, base as any))
-
-export const darkTheme = createTheme(deepmerge({
-  palette: { mode: 'dark', primary: brand.primary, background: { default: '#0f1021', paper: '#15172b' } },
-}, base as any))
+/** Светлая тема */
+export const lightTheme = createTheme({
+  palette: {
+    mode: 'light',
+    primary: { main: '#7C3AED' },
+    background: {
+      default: '#f7f7f9',
+      paper: '#ffffff',
+    },
+  },
+  shape: { borderRadius: 8 },
+  typography: baseTypography,
+  components,
+})
