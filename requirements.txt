@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+sqlalchemy>=2.0
+psycopg[binary]
+alembic
+pandas
+openpyxl
+pydantic
+python-dotenv
+jinja2
+requests

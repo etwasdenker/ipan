@@ -1,0 +1,22 @@
+{
+  "groups": [
+    {
+      "title": "ПАНЕЛЬ",
+      "items": [
+        { "id": "dashboard", "label": "Dashboard", "icon": "panel" }
+      ]
+    },
+    {
+      "title": "КОНТЕНТ",
+      "items": [
+        { "id": "articles", "label": "Статьи", "icon": "folder" }
+      ]
+    },
+    {
+      "title": "НАСТРОЙКИ",
+      "items": [
+        { "id": "ui", "label": "Интерфейс", "icon": "gear" }
+      ]
+    }
+  ]
+}

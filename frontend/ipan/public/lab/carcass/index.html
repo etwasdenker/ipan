@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>A.IPAN — Carcass v10.2 (renamed containers, fixed toggle)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playpen+Sans:wght@300..800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      /* OUTER */
+      --left-width: 300px;
+      --top-height: 60px;
+      --left-bg: #191919;
+      --top-bg: #1c1c1c;
+      --main-bg: #171717;
+      --line-color-v: #6a6a6a;
+      --line-color-h: #6a6a6a;
+      --line-thickness-v: 1px;
+      --line-thickness-h: 1px;
+      /* INNER (main) */
+      --inner-left-width: 280px;
+      --inner-right-width: 260px;
+      --inner-top-height: 56px;
+      --inner-left-bg: #181818;
+      --inner-top-bg: #1b1b1b;
+      --inner-content-bg: #161616;
+      --inner-right-bg: #181818;
+      --inner-line-color-vl: #8a8a8a;
+      --inner-line-color-vr: #8a8a8a;
+      --inner-line-color-h:  #8a8a8a;
+      --inner-line-thickness-vl: 1px;
+      --inner-line-thickness-vr: 1px;
+      --inner-line-thickness-h:  1px;
+      --inner-left-line-pos: 0px;
+      --inner-right-line-pos: 0px;
+      --inner-left-collapsed: 0;
+      --inner-right-collapsed: 0;
+      /* MIDDLE inner carcass (top/bottom) */
+      --mid-inner-top-height: 180px;
+      --mid-top-bg: #181818;
+      --mid-bottom-bg: #181818;
+      --mid-line-h-color: #8a8a8a;
+      --mid-line-h-thickness: 1px;
+      --mid-top-collapsed: 0;
+      /* LEFT inner carcass (header/center/footer) */
+      --left-inner-top-height: 72px;
+      --left-inner-bottom-height: 52px;
+      --left-inner-top-bg: #181818;
+      --left-inner-center-bg: #191919;
+      --left-inner-bottom-bg: #181818;
+      --left-inner-line-top-color: #6a6a6a;
+      --left-inner-line-bottom-color: #6a6a6a;
+      --left-inner-line-top-thickness: 1px;
+      --left-inner-line-bottom-thickness: 1px;
+      /* TOP inner carcass (browse/tray) */
+      --top-inner-tray-width: 240px;
+      --top-inner-browse-bg: #1b1b1b;
+      --top-inner-tray-bg: #1b1b1b;
+      --top-inner-line-color: #6a6a6a;
+      --top-inner-line-thickness: 1px;
+      /* TOP-MAIN inner carcass (ltabs/rtabs) */
+      --topmain-inner-rtabs-width: 200px;
+      --topmain-inner-ltabs-bg: #1b1b1b;
+      --topmain-inner-rtabs-bg: #1b1b1b;
+      --topmain-inner-line-color: #8a8a8a;
+      --topmain-inner-line-thickness: 1px;
+      /* CONTENT inner carcass (top/center/bottom) */
+      --content-inner-top-height: 64px;
+      --content-inner-bottom-height: 56px;
+      --content-inner-top-bg: #181818;
+      --content-inner-center-bg: #161616;
+      --content-inner-bottom-bg: #181818;
+      --content-inner-line-top-color: #8a8a8a;
+      --content-inner-line-bottom-color: #8a8a8a;
+      --content-inner-line-top-thickness: 1px;
+      --content-inner-line-bottom-thickness: 1px;
+      /* RIGHT inner carcass (top/center/bottom) */
+      --right-inner-top-height: 0px;
+      --right-inner-center-height: 240px;
+      --right-inner-bottom-height: 0px;
+      --right-inner-top-bg: #181818;
+      --right-inner-center-bg: #181818;
+      --right-inner-bottom-bg: #181818;
+      --right-inner-line-top-color: #8a8a8a;
+      --right-inner-line-bottom-color: #8a8a8a;
+      --right-inner-line-top-thickness: 1px;
+      --right-inner-line-bottom-thickness: 1px;
+
+      --cursor-ew: url('data:image/svg+xml;utf8,\
+<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20">\
+<rect x="9" y="2" width="2" height="16" fill="%23ffffff"/>\
+<path d="M7 10 L3 6 L3 14 Z" fill="%23ffffff"/>\
+<path d="M13 10 L17 6 L17 14 Z" fill="%23ffffff"/>\
+</svg>') 10 10, col-resize;
+    }
+    *{ box-sizing: border-box; }
+    html, body{ height: 100%; }
+    body{
+      margin: 0;
+      background: #121212;
+      color: #ececec;
+      font: 16px/1.45 "Playpen Sans", system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, Cantarell, "Noto Sans", Arial;
+    }
+
+    /* OUTER */
+    .carcass{
+      display: grid;
+      grid-template-columns: var(--left-width) 1fr;
+      grid-template-rows: var(--top-height) 1fr;
+      grid-template-areas:
+        "left top"
+        "left main";
+      height: 100%;
+      position: relative;
+      overflow: hidden;
+    }
+    .container{ position: relative; display: flex; align-items: stretch; justify-content: stretch; }
+    .container.left{ grid-area: left; background: var(--left-bg); min-width:0; overflow: hidden; }
+    .container.top{  grid-area: top;  background: var(--top-bg);  min-width:0; overflow: hidden; align-items:center; justify-content:center; }
+    .container.main{ grid-area: main; background: var(--main-bg); min-width:0; overflow: hidden; }
+
+    /* OUTER visual lines */
+    .divider-left{
+      position: absolute; top: 0; bottom: 0;
+      left: calc(var(--left-width) - var(--line-thickness-v));
+      width: var(--line-thickness-v);
+      background: var(--line-color-v);
+      pointer-events: none;
+      z-index: 11;
+      transition: background .12s ease, width .12s ease, left .12s ease;
+    }
+    .divider-top{
+      position: absolute; left: var(--left-width); right: 0;
+      top: calc(var(--top-height) - var(--line-thickness-h));
+      height: var(--line-thickness-h);
+      background: var(--line-color-h);
+      pointer-events: auto;
+      z-index: 9;
+      cursor: ns-resize;
+      transition: background .12s ease, height .12s ease;
+    }
+    .divider-top:hover{
+      height: 4px;
+      background: #ffffff;
+    }
+    .post-ol{
+      position: absolute; top: 0; bottom: 0;
+      left: calc(var(--left-width) - 6px);
+      width: 12px;
+      z-index: 15;
+      cursor: var(--cursor-ew);
+      touch-action: none;
+    }
+    .post-ol:hover ~ .divider-left{ width: 4px; background: #ffffff; }
+
+    .post-ot{
+      position: absolute; left: var(--left-width); right: 0;
+      top: calc(var(--top-height) - 6px);
+      height: 12px;
+      z-index: 15;
+      cursor: ns-resize;
+      touch-action: none;
+    }
+    .post-ot:hover ~ .divider-top{ height: 4px; background: #ffffff; }
+
+    /* LEFT inner carcass (3 rows) */
+    .left-inner{
+      position: absolute; inset: 0;
+      display: grid;
+      grid-template-rows: var(--left-inner-top-height) 1fr var(--left-inner-bottom-height);
+      grid-template-areas:
+        "lefttop"
+        "leftcenter"
+        "leftbottom";
+    }
+    .left-top   { grid-area: lefttop;    background: var(--left-inner-top-bg);    display:flex; align-items:center; justify-content:center; overflow: hidden; }
+    .left-center{ grid-area: leftcenter; background: var(--left-inner-center-bg); display:flex; flex-direction: column; align-items: stretch; justify-content:flex-start; overflow-y: hidden; }
+    .left-bottom{ grid-area: leftbottom; background: var(--left-inner-bottom-bg); display:flex; align-items:center; justify-content:center; overflow: hidden; }
+
+    .left-line-top{
+      position: absolute; left: 0; right: 0;
+      top: var(--left-inner-top-height);
+      height: var(--left-inner-line-top-thickness);
+      background: var(--left-inner-line-top-color);
+      pointer-events: none;
+    }
+    .left-line-bottom{
+      position: absolute; left: 0; right: 0;
+      bottom: var(--left-inner-bottom-height);
+      height: var(--left-inner-line-bottom-thickness);
+      background: var(--left-inner-line-bottom-color);
+      pointer-events: none;
+    }
+
+    /* TOP inner carcass (browse/tray) */
+    .top-inner{
+      position: absolute; inset: 0;
+      display: grid;
+      grid-template-columns: 1fr var(--top-inner-tray-width);
+      grid-template-areas: "topbrowse toptray";
+    }
+    .top-browse{ grid-area: topbrowse; background: var(--top-inner-browse-bg); display:flex; align-items:center; justify-content:center; overflow: hidden; }
+    .top-tray{ grid-area: toptray; background: var(--top-inner-tray-bg); display:flex; align-items:center; justify-content:center; overflow: hidden; }
+    .top-line-v{
+      position: absolute; top: 0; bottom: 0;
+      right: var(--top-inner-tray-width);
+      width: var(--top-inner-line-thickness);
+      background: var(--top-inner-line-color);
+      pointer-events: none;
+    }
+
+    /* INNER (main) */
+    .inner{
+      position: absolute; inset: 0;
+      display: grid;
+      grid-template-columns: var(--inner-left-width) 1fr var(--inner-right-width);
+      grid-template-rows: var(--inner-top-height) 1fr;
+      grid-template-areas:
+        "innertop innertop innertop"
+        "innerleft innercontent innerright";
+    }
+    .inner-top{ grid-area: innertop; background: var(--inner-top-bg); display:flex; align-items:center; justify-content:center; min-width:0; overflow: hidden; position: relative; }
+    .inner-left{ grid-area: innerleft; background: var(--inner-left-bg); display:flex; flex-direction: column; align-items: stretch; justify-content:flex-start; min-width:0; overflow: hidden; position: relative; }
+    .inner-content{ grid-area: innercontent; background: var(--inner-content-bg); display:flex; flex-direction: column; align-items: stretch; justify-content:flex-start; min-width:0; overflow: hidden; position: relative; }
+    .inner-right{ grid-area: innerright; background: var(--inner-right-bg); display:flex; flex-direction: column; align-items: stretch; justify-content:flex-start; min-width:0; overflow: hidden; position: relative; }
+
+    /* TOP-MAIN inner carcass (ltabs/rtabs) */
+    .topmain-inner{
+      position: absolute; inset: 0;
+      display: grid;
+      grid-template-columns: 1fr var(--topmain-inner-rtabs-width);
+      grid-template-areas: "topmainltabs topmainrtabs";
+    }
+    .topmain-ltabs{ grid-area: topmainltabs; background: var(--topmain-inner-ltabs-bg); display:flex; align-items:center; justify-content:flex-start; overflow: hidden; }
+    .topmain-rtabs{ grid-area: topmainrtabs; background: var(--topmain-inner-rtabs-bg); display:flex; align-items:center; justify-content:center; overflow: hidden; }
+    .topmain-line-v{
+      position: absolute; top: 0; bottom: 0;
+      right: var(--topmain-inner-rtabs-width);
+      width: var(--topmain-inner-line-thickness);
+      background: var(--topmain-inner-line-color);
+      pointer-events: none;
+    }
+
+    /* CONTENT inner carcass (top/center/bottom) */
+    .content-inner{
+      position: absolute; inset: 0;
+      display: grid;
+      grid-template-rows: var(--content-inner-top-height) 1fr var(--content-inner-bottom-height);
+      grid-template-areas:
+        "contenttop"
+        "contentcenter"
+        "contentbottom";
+    }
+    .content-top{ grid-area: contenttop; background: var(--content-inner-top-bg); display:flex; align-items:center; justify-content:center; overflow: hidden; }
+    .content-center{ grid-area: contentcenter; background: var(--content-inner-center-bg); display:flex; flex-direction: column; align-items: stretch; justify-content:flex-start; overflow-y: auto; }
+    .content-bottom{ grid-area: contentbottom; background: var(--content-inner-bottom-bg); display:flex; align-items:center; justify-content:center; overflow: hidden; }
+    .content-line-top{
+      position: absolute; left: 0; right: 0;
+      top: var(--content-inner-top-height);
+      height: var(--content-inner-line-top-thickness);
+      background: var(--content-inner-line-top-color);
+      pointer-events: none;
+    }
+    .content-line-bottom{
+      position: absolute; left: 0; right: 0;
+      bottom: var(--content-inner-bottom-height);
+      height: var(--content-inner-line-bottom-thickness);
+      background: var(--content-inner-line-bottom-color);
+      pointer-events: none;
+    }
+
+    /* RIGHT inner carcass (top/center/bottom) */
+    .right-inner{
+      position: absolute; inset: 0;
+      display: grid;
+      grid-template-rows: var(--right-inner-top-height) 1fr var(--right-inner-bottom-height);
+      grid-template-areas:
+        "righttop"
+        "rightcenter"
+        "rightbottom";
+    }
+    .right-top{ grid-area: righttop; background: var(--right-inner-top-bg); display:flex; align-items:center; justify-content:center; overflow: hidden; }
+    .right-center{ grid-area: rightcenter; background: var(--right-inner-center-bg); display:flex; flex-direction: column; align-items: stretch; justify-content:flex-start; overflow-y: auto; }
+    .right-bottom{ grid-area: rightbottom; background: var(--right-inner-bottom-bg); display:flex; align-items:center; justify-content:center; overflow: hidden; }
+    .right-line-top{
+      position: absolute; left: 0; right: 0;
+      top: var(--right-inner-top-height);
+      height: var(--right-inner-line-top-thickness);
+      background: var(--right-inner-line-top-color);
+      pointer-events: none;
+    }
+    .right-line-bottom{
+      position: absolute; left: 0; right: 0;
+      bottom: var(--right-inner-bottom-height);
+      height: var(--right-inner-line-bottom-thickness);
+      background: var(--right-inner-line-bottom-color);
+      pointer-events: none;
+    }
+
+    /* MIDDLE inner carcass (top/bottom) */
+    .middle-inner{
+      position: absolute; inset: 0;
+      display: grid;
+      grid-template-rows: var(--mid-inner-top-height) 1fr;
+      grid-template-areas: "midtop" "midbottom";
+    }
+    .mid-top{ grid-area: midtop; display:flex; flex-direction:column; background: var(--mid-top-bg); overflow-y: hidden; }
+    .mid-bottom{ grid-area: midbottom; display:flex; flex-direction:column; background: var(--mid-bottom-bg); overflow-y: hidden; }
+
+    .mid-line-h{
+      position: absolute; left: 0; right: 0;
+      top: calc(var(--mid-inner-top-height) - var(--mid-line-h-thickness));
+      height: var(--mid-line-h-thickness);
+      background: var(--mid-line-h-color);
+      opacity: calc(1 * (1 - var(--mid-top-collapsed)));
+      z-index: 7;
+      pointer-events: none;
+      transition: background .12s ease, height .12s ease, top .12s ease, opacity .12s ease;
+    }
+    .post-mh{
+      position: absolute; left: 0; right: 0;
+      top: calc(var(--mid-inner-top-height) - 6px);
+      height: 12px;
+      cursor: row-resize;
+      z-index: 16;
+      touch-action: none;
+    }
+    .post-mh:hover ~ .mid-line-h,
+    .dragging-mh .mid-line-h{ height: 4px; background: #ffffff; opacity: 1; }
+
+
+    .inner-line-vl, .inner-line-vr, .inner-line-h{ position: absolute; z-index: 6; pointer-events: none; }
+    .inner-line-vl{
+      top: var(--inner-top-height); bottom: 0;
+      left: var(--inner-left-line-pos);
+      width: var(--inner-line-thickness-vl);
+      background: var(--inner-line-color-vl);
+      opacity: calc(1 * (1 - var(--inner-left-collapsed)));
+      transition: background .12s ease, width .12s ease, left .12s ease, opacity .12s ease;
+    }
+    .inner-line-vr{
+      top: var(--inner-top-height); bottom: 0;
+      right: var(--inner-right-line-pos);
+      width: var(--inner-line-thickness-vr);
+      transform: translateX(-0.5px);
+      background: var(--inner-line-color-vr);
+      opacity: calc(1 * (1 - var(--inner-right-collapsed)));
+      transition: background .12s ease, width .12s ease, right .12s ease, opacity .12s ease;
+    }
+    .inner-line-h{
+      left: 0; right: 0;
+      top: calc(var(--inner-top-height) - var(--inner-line-thickness-h));
+      height: var(--inner-line-thickness-h);
+      background: var(--inner-line-color-h);
+    }
+
+    .post{ position: absolute; top: var(--inner-top-height); bottom: 0; z-index: 15; cursor: var(--cursor-ew); touch-action: none; }
+    .post.vl{ left: calc(var(--inner-left-line-pos) - 6px); width: 12px; }
+    .post.vr{ right: calc(var(--inner-right-line-pos) - 6px); width: 12px; }
+
+    .post.vl:hover ~ .inner-line-vl,
+    .dragging-vl .inner-line-vl{ width: 4px; background: #ffffff; opacity: 1; }
+    .post.vr:hover ~ .inner-line-vr,
+    .dragging-vr .inner-line-vr{ width: 4px; background: #ffffff; opacity: 1; }
+
+    .post.hidden{ display: none; }
+
+    /* SCROLLBARS */
+    .scrollable{
+      scrollbar-width: thin;
+      scrollbar-color: var(--scroll-thumb, #5a5a5a) var(--scroll-track, transparent);
+    }
+    .scrollable::-webkit-scrollbar{ width: 10px; height: 10px; }
+    .scrollable::-webkit-scrollbar-track{ background: var(--scroll-track, transparent); }
+    .scrollable::-webkit-scrollbar-thumb{
+      background: var(--scroll-thumb, #5a5a5a);
+      border-radius: 8px;
+      border: 2px solid var(--scroll-track, transparent);
+    }
+    .scrollable::-webkit-scrollbar-thumb:hover{ background: var(--scroll-thumb-hover, #6e6e6e); }
+    .scrollable::-webkit-scrollbar-thumb:active{ background: var(--scroll-thumb-active, #808080); }
+
+    .warn{
+      position: fixed; left: 12px; bottom: 12px; z-index: 1000;
+      background: #3b1f1f; border: 1px solid #a04444; color: #ffdcdc;
+      padding: 10px 12px; border-radius: 10px; font-size: 13px;
+      max-width: 560px; box-shadow: 0 6px 20px rgba(0,0,0,.25);
+    }
+    .warn code{ font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <div id="carcass" class="carcass">
+    <div class="container left">
+      <!-- NEW left inner carcass -->
+      <div class="left-inner">
+        <div class="left-top"></div>
+        <div id="leftCenter" class="left-center">
+          <div id="leftCenterFiller"></div>
+        </div>
+        <div class="left-bottom"></div>
+
+        <div class="left-line-top" aria-hidden="true"></div>
+        <div class="left-line-bottom" aria-hidden="true"></div>
+      </div>
+    </div>
+
+    <div class="container top">
+      <div class="top-inner">
+        <div class="top-browse"></div>
+        <div class="top-tray"></div>
+        <div class="top-line-v" aria-hidden="true"></div>
+      </div>
+    </div>
+    <div class="container main">
+      <div id="inner" class="inner">
+        <div class="inner-top">
+          <div class="topmain-inner">
+            <div class="topmain-ltabs"></div>
+            <div class="topmain-rtabs"></div>
+            <div class="topmain-line-v" aria-hidden="true"></div>
+          </div>
+        </div>
+        <div class="inner-left">
+          <div class="middle-inner">
+            <div class="mid-top"><div class="filler" aria-hidden="true"></div></div>
+            <div class="mid-bottom"><div class="filler" aria-hidden="true"></div></div>
+            <div id="postMH" class="post-mh" title="Resize 3tmiddle_uic"></div>
+            <div class="mid-line-h" aria-hidden="true"></div>
+          </div>
+        </div>
+        <div class="inner-content">
+          <div class="content-inner">
+            <div class="content-top"></div>
+            <div class="content-center">
+              <div class="filler" aria-hidden="true"></div>
+            </div>
+            <div class="content-bottom"></div>
+            <div class="content-line-top" aria-hidden="true"></div>
+            <div class="content-line-bottom" aria-hidden="true"></div>
+          </div>
+        </div>
+        <div class="inner-right">
+          <div class="right-inner">
+            <div class="right-top"></div>
+            <div class="right-center">
+              <div class="filler" aria-hidden="true"></div>
+            </div>
+            <div class="right-bottom"></div>
+            <div class="right-line-top" aria-hidden="true"></div>
+            <div class="right-line-bottom" aria-hidden="true"></div>
+          </div>
+        </div>
+
+        <div id="postVL" class="post vl" title="Resize 2middle_uic"></div>
+        <div id="postVR" class="post vr" title="Resize 2right_uic"></div>
+
+        <div class="inner-line-vl" aria-hidden="true"></div>
+        <div class="inner-line-vr" aria-hidden="true"></div>
+        <div class="inner-line-h"  aria-hidden="true"></div>
+      </div>
+    </div>
+
+    <div id="postOL" class="post-ol" title="Свернуть/развернуть 1left_uic"></div>
+    <div id="postOT" class="post-ot" title="Свернуть/развернуть 1top_uic"></div>
+
+    <div class="divider-left" aria-hidden="true"></div>
+    <div class="divider-top" aria-hidden="true"></div>
+  </div>
+
+  <div id="warn" class="warn" style="display:none"></div>
+
+  <script>
+    function normalizeAreas(areas){
+      if (!areas) return areas;
+      const map = {
+        // Old format compatibility
+        left_area: '1left_uic',
+        top_area: '1top_uic',
+        main_area: '1main_uic',
+        top_main_area: '2tabs_uic',
+        middle_area: '2middle_uic',
+        content_area: '2window_uic',
+        right_area: '2right_uic',
+        'left-header_area': '2tleft_uic',
+        'left-center_area': '2cleft_uic',
+        'left-footer_area': '2bleft_uic',
+        // Old naming compatibility
+        'left_ui_container': '1left_uic',
+        'top_ui_container': '1top_uic',
+        'main_ui_container': '1main_uic',
+        'top_main_ui_container': '2tabs_uic',
+        'middle_ui_container': '2middle_uic',
+        'content_ui_container': '2window_uic',
+        'right_ui_container': '2right_uic',
+        '2tleft_uic': '2tleft_uic',
+        '2cleft_uic': '2cleft_uic',
+        '2bleft_uic': '2bleft_uic',
+        '3tmiddle_uic': '3tmiddle_uic',
+        '3bmiddle_uic': '3bmiddle_uic'
+      };
+      const out = {...areas};
+      for (const [oldKey, newKey] of Object.entries(map)){
+        if (areas[oldKey] && !out[newKey]) out[newKey] = areas[oldKey];
+      }
+      return out;
+    }
+
+    const hardDefaults = {
+      theme: "dark",
+      areas: normalizeAreas({
+        '1left_uic':   { present:true, bg:"#191919", size:{ width:"300px", min:72, std:300 }, line:{ side:"right",  color:"#6a6a6a", thickness:1 } },
+        '1top_uic':    { present:true, bg:"#1c1c1c", size:{ height:"60px" }, line:{ side:"bottom", color:"#6a6a6a", thickness:1 } },
+        '1main_uic':   { present:true, bg:"#171717" },
+        '2tabs_uic':   { present:true, bg:"#1b1b1b", size:{ height:"56px" }, line:{ side:"bottom", color:"#8a8a8a", thickness:1 } },
+        '2middle_uic': { present:true, bg:"#181818", size:{ width:"280px", min:160, std:280 }, resizable:{ edge:"right" }, line:{ side:"right", color:"#8a8a8a", thickness:1, hideWhenZero:true } },
+        '2window_uic': { present:true, bg:"#161616", minContentWidth:320 },
+        '2right_uic':  { present:true, bg:"#181818", size:{ width:"260px", min:160, std:260 }, resizable:{ edge:"left"  }, line:{ side:"left",  color:"#8a8a8a", thickness:1, hideWhenZero:true } },
+
+        '2tleft_uic': { present:true, bg:"#181818", size:{ height:72 },  line:{ side:"bottom", thickness:1, color:"#6a6a6a" } },
+        '2cleft_uic': { present:true, bg:"#191919", scroll:true },
+        '2bleft_uic': { present:true, bg:"#181818", size:{ height:52 },  line:{ side:"top",    thickness:1, color:"#6a6a6a" } }
+      })
+    };
+
+    let v2 = null;
+    let config = null;
+
+    const root = document.documentElement;
+    const $ = (id)=>document.getElementById(id);
+    function setVar(name, value){ root.style.setProperty(name, value); }
+    function pxNum(v){ return typeof v === 'string' ? parseFloat(v) : v; }
+    function toPx(v, fallbackPx){
+      if (v==null) return fallbackPx;
+      if (typeof v === 'number') return v + 'px';
+      const s = String(v).trim();
+      if (s.endsWith('px')) return s;
+      const n = parseFloat(s);
+      return isFinite(n) ? (n + 'px') : fallbackPx;
+    }
+    function approx(a,b){ return Math.abs(a-b) <= 1; }
+    function getTotal(){ return $('inner').getBoundingClientRect().width; }
+    function showWarn(msg){ const w = $('warn'); w.innerHTML = msg; w.style.display = 'block'; }
+
+    // Color helpers
+    function hexToRgb(hex){
+      const m = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex || '');
+      if(!m) return {r:0,g:0,b:0};
+      return { r: parseInt(m[1],16), g: parseInt(m[2],16), b: parseInt(m[3],16) };
+    }
+    function rgbToHex(r,g,b){
+      const h = (x)=>x.toString(16).padStart(2,'0');
+      return '#'+h(r)+h(g)+h(b);
+    }
+    function mixToward(hex, toward, amount){
+      const c = hexToRgb(hex);
+      const t = (toward === 'white') ? {r:255,g:255,b:255} : {r:0,g:0,b:0};
+      const r = Math.round(c.r + (t.r - c.r)*amount);
+      const g = Math.round(c.g + (t.g - c.g)*amount);
+      const b = Math.round(c.b + (t.b - c.b)*amount);
+      return rgbToHex(r,g,b);
+    }
+    const BG_TINT_DARK  = 0.06;
+    const LINE_TINT_DARK= 0.20;
+    const BG_TINT_LIGHT = 0.85;
+    const LINE_TINT_LIGHT_TO_BLACK = 0.45;
+    function toneBg(hex, mode){
+      return (mode === 'light')
+        ? mixToward(hex, 'white', BG_TINT_LIGHT)
+        : mixToward(hex, 'white', BG_TINT_DARK);
+    }
+    function toneLine(hex, mode){
+      return (mode === 'light')
+        ? mixToward(hex, 'black', LINE_TINT_LIGHT_TO_BLACK)
+        : mixToward(hex, 'white', LINE_TINT_DARK);
+    }
+
+    function relativeLuma(rgb){
+      const c = ['r','g','b'].map(k=>{
+        let v = rgb[k]/255;
+        return v <= 0.03928 ? v/12.92 : Math.pow((v+0.055)/1.055, 2.4);
+      });
+      return 0.2126*c[0] + 0.7152*c[1] + 0.0722*c[2];
+    }
+    function scrollPalette(bgHex){
+      const c = hexToRgb(bgHex);
+      const L = relativeLuma(c);
+      const mix = (toward, amt)=>mixToward(bgHex, toward, amt);
+      return {
+        track:  rgbToHex(c.r,c.g,c.b),
+        thumb:  (L < 0.5) ? mix('white', .18) : mix('black', .18),
+        hover:  (L < 0.5) ? mix('white', .28) : mix('black', .28),
+        active: (L < 0.5) ? mix('white', .36) : mix('black', .36)
+      };
+    }
+    function applyScrollbarVars(el, bgHex){
+      const p = scrollPalette(bgHex);
+      el.style.setProperty('--scroll-track', p.track);
+      el.style.setProperty('--scroll-thumb', p.thumb);
+      el.style.setProperty('--scroll-thumb-hover', p.hover);
+      el.style.setProperty('--scroll-thumb-active', p.active);
+    }
+
+    function deriveInternal(v2raw){
+      const A = normalizeAreas(v2raw.areas);
+      const themeMode = (typeof v2raw.theme === 'string') ? v2raw.theme : (v2raw.theme?.mode || 'dark');
+      const isLight = themeMode === 'light';
+
+      document.body.style.color = isLight ? '#1a1a1a' : '#ececec';
+      document.body.style.background = isLight ? '#f4f4f6' : '#121212';
+
+      // OUTER sizes/colors
+      setVar('--left-width', toPx(A['1left_uic']?.size?.width, '300px'));
+      setVar('--top-height', toPx(A['1top_uic']?.size?.height, '60px'));
+      const leftBg    = toneBg(A['1left_uic']?.bg || '#191919', themeMode);
+      const topBg     = toneBg(A['1top_uic']?.bg  || '#1c1c1c',  themeMode);
+      const mainBg    = toneBg(A['1main_uic']?.bg || '#171717', themeMode);
+      setVar('--left-bg', leftBg);
+      setVar('--top-bg',  topBg);
+      setVar('--main-bg', mainBg);
+      const vLine = toneLine(A['1left_uic']?.line?.color || '#6a6a6a', themeMode);
+      const hLine = toneLine(A['1top_uic']?.line?.color  || '#6a6a6a', themeMode);
+      setVar('--line-color-v', vLine);
+      setVar('--line-color-h', hLine);
+      setVar('--line-thickness-v', toPx(A['1left_uic']?.line?.thickness ?? 1, '1px'));
+      setVar('--line-thickness-h', toPx(A['1top_uic']?.line?.thickness  ?? 1, '1px'));
+      const outer = {
+        stdLeft: pxNum(toPx(A['1left_uic']?.size?.std ?? A['1left_uic']?.size?.width ?? 300, '300px')),
+        minLeft: A['1left_uic']?.size?.min ?? 72,
+        stdTop: pxNum(toPx(A['1top_uic']?.size?.std ?? A['1top_uic']?.size?.height ?? 60, '60px'))
+      };
+      setVar('--left-width', outer.stdLeft + 'px');
+
+      // LEFT inner carcass
+      const LH = A['2tleft_uic'] || {};
+      const LC = A['2cleft_uic'] || {};
+      const LF = A['2bleft_uic'] || {};
+      const lh = LH.present === false ? 0 : pxNum(toPx(LH.size?.height ?? 0, '0px'));
+      const lf = LF.present === false ? 0 : pxNum(toPx(LF.size?.height ?? 0, '0px'));
+      setVar('--left-inner-top-height', lh + 'px');
+      setVar('--left-inner-bottom-height', lf + 'px');
+      setVar('--left-inner-top-bg',     toneBg(LH.bg || '#181818', themeMode));
+      setVar('--left-inner-center-bg',  toneBg(LC.bg || '#191919', themeMode));
+      setVar('--left-inner-bottom-bg',  toneBg(LF.bg || '#181818', themeMode));
+      setVar('--left-inner-line-top-color',    toneLine(LH.line?.color || '#6a6a6a', themeMode));
+      setVar('--left-inner-line-bottom-color', toneLine(LF.line?.color || '#6a6a6a', themeMode));
+      setVar('--left-inner-line-top-thickness',    toPx(LH.line?.thickness ?? 1, '1px'));
+      setVar('--left-inner-line-bottom-thickness', toPx(LF.line?.thickness ?? 1, '1px'));
+
+      // INNER (main) sizes/colors
+      const leftPresent  = A['2middle_uic']?.present !== false;
+      const rightPresent = A['2right_uic']?.present  !== false;
+      setVar('--inner-left-width',  leftPresent  ? toPx(A['2middle_uic']?.size?.width,  '280px') : '0px');
+      setVar('--inner-right-width', rightPresent ? toPx(A['2right_uic']?.size?.width,   '260px') : '0px');
+      setVar('--inner-top-height',  toPx(A['2tabs_uic']?.size?.height, '56px'));
+      setVar('--inner-left-bg',    toneBg(A['2middle_uic']?.bg   || '#181818', themeMode));
+      setVar('--inner-top-bg',     toneBg(A['2tabs_uic']?.bg || '#1b1b1b', themeMode));
+      setVar('--inner-content-bg', toneBg(A['2window_uic']?.bg  || '#161616', themeMode));
+      setVar('--inner-right-bg',   toneBg(A['2right_uic']?.bg    || '#181818', themeMode));
+      setVar('--inner-line-color-vl', toneLine(A['2middle_uic']?.line?.color || '#8a8a8a', themeMode));
+      setVar('--inner-line-color-vr', toneLine(A['2right_uic']?.line?.color  || '#8a8a8a', themeMode));
+      setVar('--inner-line-color-h',  toneLine(A['2tabs_uic']?.line?.color || '#8a8a8a', themeMode));
+      setVar('--inner-line-thickness-vl', toPx(A['2middle_uic']?.line?.thickness ?? 1, '1px'));
+      setVar('--inner-line-thickness-vr', toPx(A['2right_uic']?.line?.thickness  ?? 1, '1px'));
+      setVar('--inner-line-thickness-h',  toPx(A['2tabs_uic']?.line?.thickness ?? 1, '1px'));
+
+      // MIDDLE inner top/bottom sizing/line from top-middle container
+      const TM = A['3tmiddle_uic'] || {};
+      const BM = A['3bmiddle_uic'] || {};
+      setVar('--mid-inner-top-height', toPx(TM.size?.height ?? 180, '180px'));
+      setVar('--mid-top-bg', toneBg(TM.bg || '#181818', themeMode));
+      setVar('--mid-bottom-bg', toneBg(BM.bg || '#181818', themeMode));
+      setVar('--mid-line-h-color', toneLine(TM.line?.color || '#8a8a8a', themeMode));
+      setVar('--mid-line-h-thickness', toPx(TM.line?.thickness ?? 1, '1px'));
+
+      // TOP inner (browse/tray)
+      const TB = A['2browse_uic'] || {};
+      const TT = A['2tray_uic'] || {};
+      setVar('--top-inner-tray-width', toPx(TT.size?.width ?? 240, '240px'));
+      setVar('--top-inner-browse-bg', toneBg(TB.bg || '#1b1b1b', themeMode));
+      setVar('--top-inner-tray-bg', toneBg(TT.bg || '#1b1b1b', themeMode));
+      setVar('--top-inner-line-color', toneLine(TT.line?.color || '#6a6a6a', themeMode));
+      setVar('--top-inner-line-thickness', toPx(TT.line?.thickness ?? 1, '1px'));
+
+      // TOP-MAIN inner (ltabs/rtabs)
+      const TML = A['3ltabs_uic'] || {};
+      const TMR = A['3rtabs_uic'] || {};
+      setVar('--topmain-inner-rtabs-width', toPx(TMR.size?.width ?? 200, '200px'));
+      setVar('--topmain-inner-ltabs-bg', toneBg(TML.bg || '#1b1b1b', themeMode));
+      setVar('--topmain-inner-rtabs-bg', toneBg(TMR.bg || '#1b1b1b', themeMode));
+      setVar('--topmain-inner-line-color', toneLine(TMR.line?.color || '#8a8a8a', themeMode));
+      setVar('--topmain-inner-line-thickness', toPx(TMR.line?.thickness ?? 1, '1px'));
+
+      // CONTENT inner (top/center/bottom)
+      const CT = A['3tcontent_uic'] || {};
+      const CC = A['3content_uic'] || {};
+      const CB = A['3bcontent_uic'] || {};
+      setVar('--content-inner-top-height', toPx(CT.size?.height ?? 64, '64px'));
+      setVar('--content-inner-bottom-height', toPx(CB.size?.height ?? 56, '56px'));
+      setVar('--content-inner-top-bg', toneBg(CT.bg || '#181818', themeMode));
+      setVar('--content-inner-center-bg', toneBg(CC.bg || '#161616', themeMode));
+      setVar('--content-inner-bottom-bg', toneBg(CB.bg || '#181818', themeMode));
+      setVar('--content-inner-line-top-color', toneLine(CT.line?.color || '#8a8a8a', themeMode));
+      setVar('--content-inner-line-bottom-color', toneLine(CB.line?.color || '#8a8a8a', themeMode));
+      setVar('--content-inner-line-top-thickness', toPx(CT.line?.thickness ?? 1, '1px'));
+      setVar('--content-inner-line-bottom-thickness', toPx(CB.line?.thickness ?? 1, '1px'));
+
+      // RIGHT inner (top/center/bottom)
+      const RT = A['3taux_uic'] || {};
+      const RC = A['3aux_uic'] || {};
+      const RB = A['3baux_uic'] || {};
+      setVar('--right-inner-top-height', toPx(RT.size?.height ?? 0, '0px'));
+      setVar('--right-inner-center-height', toPx(RC.size?.height ?? 240, '240px'));
+      setVar('--right-inner-bottom-height', toPx(RB.size?.height ?? 0, '0px'));
+      setVar('--right-inner-top-bg', toneBg(RT.bg || '#181818', themeMode));
+      setVar('--right-inner-center-bg', toneBg(RC.bg || '#181818', themeMode));
+      setVar('--right-inner-bottom-bg', toneBg(RB.bg || '#181818', themeMode));
+      setVar('--right-inner-line-top-color', toneLine(RT.line?.color || '#8a8a8a', themeMode));
+      setVar('--right-inner-line-bottom-color', toneLine(RB.line?.color || '#8a8a8a', themeMode));
+      setVar('--right-inner-line-top-thickness', toPx(RT.line?.thickness ?? 1, '1px'));
+      setVar('--right-inner-line-bottom-thickness', toPx(RB.line?.thickness ?? 1, '1px'));
+
+      return {
+        themeMode,
+        outer,
+        inner: {
+          min: {
+            left: A['2middle_uic']?.size?.min ?? 160,
+            right: A['2right_uic']?.size?.min ?? 160,
+            content: A['2window_uic']?.minContentWidth ?? 320
+          },
+          std: {
+            left: pxNum(toPx(A['2middle_uic']?.size?.std ?? A['2middle_uic']?.size?.width ?? 280, '280px')),
+            right: pxNum(toPx(A['2right_uic']?.size?.std  ?? A['2right_uic']?.size?.width  ?? 260, '260px'))
+          },
+          present: { left: leftPresent, right: rightPresent }
+        },
+        midInner: {
+          minTop: TM.size?.min ?? 72,
+          stdTop: pxNum(toPx(TM.size?.std ?? TM.size?.height ?? 180, '180px'))
+        },
+        scroll: {
+          leftOuter: false,
+          left:  false,
+          content: true,
+          right: false
+        },
+        leftInnerScroll: {
+          center: LC.scroll !== false
+        },
+        colors: {
+          leftOuter:  leftBg,
+          leftInnerCenter: toneBg(LC.bg || '#191919', themeMode),
+          left: toneBg(A['2middle_uic']?.bg   || '#181818', themeMode),
+          content: toneBg(A['2window_uic']?.bg  || '#161616', themeMode),
+          right: toneBg(A['2right_uic']?.bg    || '#181818', themeMode)
+        }
+      };
+    }
+
+    function computeLinePositions(){
+      const vl = parseFloat(getComputedStyle(root).getPropertyValue('--inner-line-thickness-vl')) || 1;
+      const vr = parseFloat(getComputedStyle(root).getPropertyValue('--inner-line-thickness-vr')) || 1;
+      const lw = parseFloat(getComputedStyle(root).getPropertyValue('--inner-left-width'));
+      const rw = parseFloat(getComputedStyle(root).getPropertyValue('--inner-right-width'));
+      setVar('--inner-left-line-pos',  (lw > 0.5 ? (lw - vl) : 0) + 'px');
+      setVar('--inner-right-line-pos', (rw > 0.5 ? (rw) : 0) + 'px');
+      setVar('--inner-left-collapsed',  lw <= 0.5 ? 1 : 0);
+      setVar('--inner-right-collapsed', rw <= 0.5 ? 1 : 0);
+      applyScrollStates();
+      const th = parseFloat(getComputedStyle(root).getPropertyValue('--mid-inner-top-height'));
+      setVar('--mid-top-collapsed', th <= 0.5 ? 1 : 0);
+    }
+
+    function setLeftWidth(px){ const n = Math.max(0, px); setVar('--inner-left-width', n + 'px'); computeLinePositions(); }
+    function setRightWidth(px){ const n = Math.max(0, px); setVar('--inner-right-width', n + 'px'); computeLinePositions(); }
+    function clampLayout(newLeft, newRight){
+      const total = getTotal();
+      const min = config.inner.min;
+      const content = total - newLeft - newRight;
+      if(content < min.content) return false;
+      if(newLeft < (newLeft === 0 ? 0 : min.left)) return false;
+      if(newRight < (newRight === 0 ? 0 : min.right)) return false;
+      return true;
+    }
+
+    function applyScrollStates(){
+      // Outer left: no scroll
+      const elLeftOuter = document.querySelector('.container.left');
+      elLeftOuter.classList.remove('scrollable');
+      elLeftOuter.style.overflow = 'hidden';
+
+      // left inner center scroll
+      const leftCenter = document.getElementById('leftCenter');
+      leftCenter.classList.toggle('scrollable', config.leftInnerScroll.center);
+      leftCenter.style.overflowY = config.leftInnerScroll.center ? 'auto' : 'hidden';
+
+      // main inner - old containers stay hidden
+      const elLeft  = document.querySelector('.inner-left');
+      const elCont  = document.querySelector('.inner-content');
+      const elRight = document.querySelector('.inner-right');
+      elLeft.classList.remove('scrollable'); elLeft.style.overflowY = 'hidden';
+      elRight.classList.remove('scrollable'); elRight.style.overflowY = 'hidden';
+      elCont.classList.remove('scrollable'); elCont.style.overflowY = 'hidden';
+
+      // New content inner containers scroll
+      const contentCenter = document.querySelector('.content-center');
+      const rightCenter = document.querySelector('.right-center');
+      if(contentCenter){
+        contentCenter.classList.add('scrollable');
+        contentCenter.style.overflowY = 'auto';
+      }
+      if(rightCenter){
+        rightCenter.classList.add('scrollable');
+        rightCenter.style.overflowY = 'auto';
+      }
+    }
+
+    function initPosts(){
+      const postVL = document.getElementById('postVL');
+      const postVR = document.getElementById('postVR');
+      let dragging = null, startX = 0, startLeft = 0, startRight = 0, moved = false;
+
+      postVL.classList.toggle('hidden', !config.inner.present.left);
+      postVR.classList.toggle('hidden', !config.inner.present.right);
+
+      function onDown(kind, e){
+        const leftW  = parseFloat(getComputedStyle(root).getPropertyValue('--inner-left-width'));
+        const rightW = parseFloat(getComputedStyle(root).getPropertyValue('--inner-right-width'));
+        dragging = kind; startX = e.clientX; moved = false;
+        startLeft = leftW; startRight = rightW;
+        (kind==='vl' ? postVL : postVR).setPointerCapture(e.pointerId);
+        document.body.classList.add(kind === 'vl' ? 'dragging-vl' : 'dragging-vr');
+        window.addEventListener('pointermove', onMove, { passive: false });
+        window.addEventListener('pointerup', onUp, { once: true });
+      }
+      function onMove(e){
+        if(!dragging) return;
+        e.preventDefault();
+        const dx = e.clientX - startX;
+        if(Math.abs(dx) > 2) moved = true;
+        if(dragging === 'vl'){
+          let nl = startLeft + dx; nl = Math.max(0, nl);
+          if(clampLayout(nl, startRight)) setLeftWidth(nl);
+        } else {
+          let nr = startRight - dx; nr = Math.max(0, nr);
+          if(clampLayout(startLeft, nr)) setRightWidth(nr);
+        }
+      }
+      function onUp(){
+        document.body.classList.remove('dragging-vl','dragging-vr');
+        dragging = null; window.removeEventListener('pointermove', onMove);
+      }
+
+      postVL.addEventListener('pointerdown', e=>onDown('vl', e));
+      postVR.addEventListener('pointerdown', e=>onDown('vr', e));
+
+      function toggleVL(){
+        const curL = parseFloat(getComputedStyle(root).getPropertyValue('--inner-left-width'));
+        const stdL = config.inner.std.left;
+        const curR = parseFloat(getComputedStyle(root).getPropertyValue('--inner-right-width'));
+        if(curL <= 0.5){
+          if(clampLayout(stdL, curR)) setLeftWidth(stdL);
+          return;
+        }
+        if(!approx(curL, stdL)){
+          if(clampLayout(stdL, curR)) setLeftWidth(stdL);
+        }else{
+          setLeftWidth(0);
+        }
+      }
+      function toggleVR(){
+        const curR = parseFloat(getComputedStyle(root).getPropertyValue('--inner-right-width'));
+        const stdR = config.inner.std.right;
+        const curL = parseFloat(getComputedStyle(root).getPropertyValue('--inner-left-width'));
+        if(curR <= 0.5){
+          if(clampLayout(curL, stdR)) setRightWidth(stdR);
+          return;
+        }
+        if(!approx(curR, stdR)){
+          if(clampLayout(curL, stdR)) setRightWidth(stdR);
+        }else{
+          setRightWidth(0);
+        }
+      }
+
+      postVL.addEventListener('click', (e)=>{ if(!moved) toggleVL(); });
+      postVR.addEventListener('click', (e)=>{ if(!moved) toggleVR(); });
+
+      // Horizontal resizer for middle inner
+      const postMH = document.getElementById('postMH');
+      let draggingMH = false, startYMH = 0, startTopH = 0, movedMH = false;
+      function onDownMH(e){
+        draggingMH = true; movedMH = false; startYMH = e.clientY;
+        startTopH = parseFloat(getComputedStyle(root).getPropertyValue('--mid-inner-top-height'));
+        postMH.setPointerCapture(e.pointerId);
+        document.body.classList.add('dragging-mh');
+        window.addEventListener('pointermove', onMoveMH, { passive:false });
+        window.addEventListener('pointerup', onUpMH, { once:true });
+      }
+      function onMoveMH(e){
+        if(!draggingMH) return; e.preventDefault();
+        const dy = e.clientY - startYMH; if(Math.abs(dy) > 2) movedMH = true;
+        const innerLeftEl = document.querySelector('.inner-left');
+        const maxH = innerLeftEl ? innerLeftEl.getBoundingClientRect().height - 24 : 9999;
+        let nh = startTopH + dy; nh = Math.max(0, Math.min(maxH, nh));
+        const minH = config.midInner.minTop ?? 0;
+        if(nh === 0 || nh >= minH){ root.style.setProperty('--mid-inner-top-height', nh + 'px'); computeLinePositions(); }
+      }
+      function onUpMH(){ draggingMH = false; document.body.classList.remove('dragging-mh'); window.removeEventListener('pointermove', onMoveMH); }
+      function toggleMH(){
+        const cur = parseFloat(getComputedStyle(root).getPropertyValue('--mid-inner-top-height'));
+        const std = config.midInner.stdTop;
+        if(cur <= 0.5){ root.style.setProperty('--mid-inner-top-height', std + 'px'); }
+        else if(Math.abs(cur-std) > 1){ root.style.setProperty('--mid-inner-top-height', std + 'px'); }
+        else { root.style.setProperty('--mid-inner-top-height', '0px'); }
+        computeLinePositions();
+      }
+      postMH.addEventListener('pointerdown', onDownMH);
+      postMH.addEventListener('click', (e)=>{ if(!movedMH) toggleMH(); });
+    }
+
+    function initOuterToggle(){
+      const postOL = document.getElementById('postOL');
+      postOL.addEventListener('click', ()=>{
+        const innerLeftW = parseFloat(getComputedStyle(root).getPropertyValue('--inner-left-width'));
+        if (config.inner.present.left && innerLeftW <= 0.5){
+          const std = config.inner.std.left;
+          const curRight = parseFloat(getComputedStyle(root).getPropertyValue('--inner-right-width'));
+          if (clampLayout(std, curRight)) {
+            setLeftWidth(std);
+            return;
+          }
+        }
+        const cur = parseFloat(getComputedStyle(root).getPropertyValue('--left-width'));
+        const std = config.outer.stdLeft;
+        const min = config.outer.minLeft;
+        setVar('--left-width', Math.abs(cur - min) > 1 ? (min + 'px') : (std + 'px'));
+      });
+    }
+
+    function initTopToggle(){
+      const postOT = document.getElementById('postOT');
+      if(!postOT) return;
+      
+      postOT.addEventListener('click', ()=>{
+        const cur = parseFloat(getComputedStyle(root).getPropertyValue('--top-height'));
+        const std = config.outer.stdTop;
+        setVar('--top-height', cur <= 0.5 ? (std + 'px') : '0px');
+      });
+    }
+
+    async function loadV2(){
+      const qp = new URLSearchParams(location.search);
+      const cfgName = qp.get('config') || 'carcass.config.json';
+      const url = cfgName + '?ts=' + Date.now();
+      try{
+        const res = await fetch(url, { cache: 'no-store' });
+        if(!res.ok) throw new Error('HTTP ' + res.status);
+        const data = await res.json();
+        console.info('Loaded config:', url, data);
+        return data;
+      }catch(err){
+        console.warn('Failed to fetch JSON', url, err);
+        const fallback = { ...hardDefaults };
+        return fallback;
+      }
+    }
+
+    (async function init(){
+      const v2 = await loadV2();
+      config = deriveInternal(v2);
+
+      // Scrollbars: for all scrollable containers
+      applyScrollbarVars(document.getElementById('leftCenter'), config.colors.leftInnerCenter);
+      
+      const midTopBg = getComputedStyle(document.documentElement).getPropertyValue('--mid-top-bg').trim() || '#181818';
+      const midBottomBg = getComputedStyle(document.documentElement).getPropertyValue('--mid-bottom-bg').trim() || '#181818';
+      const midTopEl = document.querySelector('.mid-top'); if(midTopEl){ applyScrollbarVars(midTopEl, midTopBg); }
+      const midBottomEl = document.querySelector('.mid-bottom'); if(midBottomEl){ applyScrollbarVars(midBottomEl, midBottomBg); }
+
+      // New content and right inner scrollbars
+      const contentCenterBg = getComputedStyle(document.documentElement).getPropertyValue('--content-inner-center-bg').trim() || '#161616';
+      const rightCenterBg = getComputedStyle(document.documentElement).getPropertyValue('--right-inner-center-bg').trim() || '#181818';
+      const contentCenter = document.querySelector('.content-center'); if(contentCenter){ applyScrollbarVars(contentCenter, contentCenterBg); }
+      const rightCenter = document.querySelector('.right-center'); if(rightCenter){ applyScrollbarVars(rightCenter, rightCenterBg); }
+
+      computeLinePositions();
+      initPosts();
+      initOuterToggle();
+      initTopToggle();
+      window.addEventListener('resize', computeLinePositions);
+
+      // Fillers
+      const f = document.getElementById('leftCenterFiller');
+      if (f) f.innerHTML = '<div style="height:1400px"></div>';
+      const fill = (el)=>{ const d = el.querySelector('.filler'); if(d){ d.innerHTML = '<div style="height:1600px"></div>'; } };
+      const midTop = document.querySelector('.mid-top'); if(midTop){ const d=midTop.querySelector('.filler'); if(d){ d.innerHTML = '<div style="height:900px"></div>'; } }
+      const midBottom = document.querySelector('.mid-bottom'); if(midBottom){ const d=midBottom.querySelector('.filler'); if(d){ d.innerHTML = '<div style="height:900px"></div>'; } }
+      // New fillers
+      const contentCenterEl = document.querySelector('.content-center'); if(contentCenterEl){ const d=contentCenterEl.querySelector('.filler'); if(d){ d.innerHTML = '<div style="height:1600px"></div>'; } }
+      const rightCenterEl = document.querySelector('.right-center'); if(rightCenterEl){ const d=rightCenterEl.querySelector('.filler'); if(d){ d.innerHTML = '<div style="height:1600px"></div>'; } }
+      fill(document.querySelector('.inner-left'));
+    })();
+  </script>
+</body>
+</html>

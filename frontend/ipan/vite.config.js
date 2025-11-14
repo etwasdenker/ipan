@@ -1,8 +1,33 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import path from "path";
 
 export default defineConfig({
   plugins: [react()],
-  server: { port: 5173 },
-  preview: { port: 5173 }
-})
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "src"),
+      "@workbench": path.resolve(__dirname, "../../workbench"),
+    },
+  },
+  server: {
+    fs: {
+      allow: [
+        path.resolve(__dirname, "."),
+        path.resolve(__dirname, "../../workbench"),
+        path.resolve(__dirname, "../.."),
+      ],
+    },
+  },
+  optimizeDeps: {
+    include: [
+      "react",
+      "react-dom",
+      "@mui/material",
+      "@mui/system",
+      "@mui/icons-material",
+      "@emotion/react",
+      "@emotion/styled",
+    ],
+  },
+});

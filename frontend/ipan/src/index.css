@@ -1,0 +1,48 @@
+/* ---- Base reset ---- */
+*, *::before, *::after { box-sizing: border-box; }
+html, body, #root { height: 100%; margin: 0; }
+
+/* Глобальный UI-шрифт по умолчанию */
+body {
+  font-family: "Playpen Sans", system-ui, -apple-system, "Segoe UI", Roboto,
+               "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Переменные шрифтов */
+:root{
+  --font-title: "Amatic SC", "Playpen Sans", system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+  --font-ui:    "Playpen Sans", system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+}
+
+/* Явно задаём Amatic SC для левої панели и хедера */
+.leftSidebar,
+[data-slot="left-sidebar"],
+.headerBar,
+[data-slot="header"]{
+  font-family: var(--font-title);
+}
+
+/* Остальное — UI-шрифт */
+.mainContent,
+[data-slot="main"]{
+  font-family: var(--font-ui);
+}
+
+/* Жёстко скрываем любые прежние разделители/резайзеры, если где-то остались */
+.resizer,
+.splitter,
+.v-divider,
+.h-divider,
+[role="separator"],
+[data-resizer],
+[data-splitter] {
+  display: none !important;
+  pointer-events: none !important;
+}
+
+/* Временная страховка: убираем случайные левые бордеры в корневых контейнерах страниц */
+main > div {
+  border-left: none !important;
+}

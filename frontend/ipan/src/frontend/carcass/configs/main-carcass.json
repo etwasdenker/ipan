@@ -1,0 +1,12 @@
+{
+  "leftWidth": 280,
+  "rightWidth": 0,
+  "headerHeight": 56,
+  "showLeftDivider": true,
+  "showHeaderDivider": false,
+  "colors": {
+    "headerBg": "#353535",
+    "bodyBg": "#141414",
+    "line": "#3C3C3C"
+  }
+}
