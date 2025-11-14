@@ -1,0 +1,19 @@
+{
+  "version": "1.0.0",
+  "ui": {
+    "headerHeight": 56,
+    "leftWidth": 280,
+    "leftCollapsedWidth": 72,
+    "rightWidth": 0,
+    "gap": 0,
+
+    "lineWidth": 1,
+    "lineColor": "rgba(255,255,255,0.12)",
+
+    "fontHref": "https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&display=swap",
+    "fontFamily": "'Amatic SC', system-ui, -apple-system, 'Segoe UI', Roboto, Arial"
+  },
+  "state": {
+    "leftCollapsed": false
+  }
+}
