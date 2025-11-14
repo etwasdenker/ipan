@@ -1,0 +1,113 @@
+{
+  "version": "1.0.0",
+  "ui": {
+    "expandedWidth": 260,
+    "collapsedWidth": 72,
+    "indent": 25,
+    "groupSpacing": 1,
+
+    "itemFontSize": 32,
+    "groupFontSize": 32,
+    "itemWeight": 400,
+    "activeWeight": 700,
+    "groupWeight": 700,
+
+    "itemTextColor": "auto-muted",
+    "groupTextColor": "auto-muted",
+    "activeTextColor": "auto",
+
+    "itemBg": "transparent",
+    "groupBg": "transparent",
+    "baseBg": "transparent",
+
+    "hoverBgItem": "auto-hover",
+    "hoverBgGroup": "auto-hover",
+    "activeBarWidth": 2,
+    "activeBarColor": "auto-bar",
+
+    "iconSizeItem": 32,
+    "iconSizeGroup": 32,
+    "iconFilter": "auto",
+
+    "fontFamily": "'Amatic SC', system-ui, -apple-system, 'Segoe UI', Roboto, Arial",
+    "fontHref": "https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&display=swap"
+  },
+  "groups": [
+    {
+      "key": "panel",
+      "title": "Панель",
+      "modules": [
+        { "key": "dashboard", "title": "Dashboard" },
+        { "key": "console", "title": "Консоль" },
+        { "key": "notes", "title": "Заметки" },
+        { "key": "reminders", "title": "Напоминания" },
+        { "key": "tasks", "title": "Задачи" },
+        { "key": "comments", "title": "Комментарии" },
+        { "key": "communications", "title": "Коммуникации" },
+        { "key": "tags", "title": "Теги" }
+      ]
+    },
+    {
+      "key": "structure",
+      "title": "Структура",
+      "modules": [
+        { "key": "users", "title": "Пользователи" },
+        { "key": "contacts", "title": "Контакты" },
+        { "key": "counteragents", "title": "Контрагенты" },
+        { "key": "brands", "title": "Бренды" },
+        { "key": "warehouses", "title": "Склады" }
+      ]
+    },
+    {
+      "key": "content",
+      "title": "Контент",
+      "modules": [
+        { "key": "products", "title": "Продукция" },
+        { "key": "articles", "title": "Статьи" },
+        { "key": "sites", "title": "Сайты" },
+        { "key": "mailings_content", "title": "Рассылки" },
+        { "key": "promos", "title": "Акции" }
+      ]
+    },
+    {
+      "key": "processes",
+      "title": "Процессы",
+      "modules": [
+        { "key": "requests", "title": "Заявки" },
+        { "key": "offers", "title": "Предложения" },
+        { "key": "invoices", "title": "Счета" },
+        { "key": "contracts", "title": "Договоры" },
+        { "key": "mailings_proc", "title": "Рассылка" },
+        { "key": "parsing", "title": "Парсинг" },
+        { "key": "workflow", "title": "Процессы" }
+      ]
+    },
+    {
+      "key": "documents",
+      "title": "Документы",
+      "modules": [
+        { "key": "letters", "title": "Письма" },
+        { "key": "ap_invoices", "title": "Входящие счета" },
+        { "key": "receipts", "title": "Поступления" },
+        { "key": "sales", "title": "Реализации" },
+        { "key": "shipments", "title": "Отгрузки" }
+      ]
+    },
+    {
+      "key": "tools",
+      "title": "Инструменты",
+      "modules": [
+        { "key": "lex", "title": "Lex" },
+        { "key": "api", "title": "API" }
+      ]
+    },
+    {
+      "key": "settings",
+      "title": "Настройки",
+      "modules": [
+        { "key": "templates", "title": "Шаблоны" },
+        { "key": "permissions", "title": "Права" }
+      ]
+    }
+  ]
+}

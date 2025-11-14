@@ -1,0 +1,62 @@
+{
+  "$id": "https://example.local/context-assistant.schema.json",
+  "type": "object",
+  "properties": {
+    "projectRoot": {
+      "type": "string"
+    },
+    "mode": {
+      "type": "string",
+      "enum": [
+        "nested",
+        "flat"
+      ]
+    },
+    "respectGitIgnore": {
+      "type": "boolean"
+    },
+    "followSymlinks": {
+      "type": "boolean"
+    },
+    "includeGlobs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "excludeGlobs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "binaryGlobs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "textFileMaxKB": {
+      "type": "integer"
+    },
+    "listDirMaxEntries": {
+      "type": "integer"
+    },
+    "diffAgainstGitHead": {
+      "type": "boolean"
+    },
+    "emitRuntimeBlock": {
+      "type": "boolean"
+    },
+    "emitGitBlock": {
+      "type": "boolean"
+    },
+    "title": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "projectRoot"
+  ],
+  "additionalProperties": true
+}

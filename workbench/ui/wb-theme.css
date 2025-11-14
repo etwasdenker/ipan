@@ -1,0 +1,29 @@
+:root {
+  /* === APP (весь Workbench) === */
+  --wb-app-bg:   #0b0b0b;
+  --wb-app-text: rgba(255,255,255,0.90);
+  --wb-app-muted: rgba(255,255,255,0.50);
+  --wb-app-hover: rgba(255,255,255,0.05);
+  --wb-menu-activebar: #dedede;
+
+  /* === PANEL (плавающая панель) === */
+  --wb-bg:   #3b3b3b;            /* фон панели */
+  --wb-text: #ffffff;            /* текст панели */
+  --wb-card: rgba(0,0,0,0.15);   /* фон контента панели */
+  --wb-icon-filter: grayscale(100%) brightness(1.2);
+}
+
+[data-wb-theme="light"] {
+  /* APP */
+  --wb-app-bg:   #fafafa;
+  --wb-app-text: rgba(0,0,0,0.82);
+  --wb-app-muted: rgba(0,0,0,0.60);
+  --wb-app-hover: rgba(0,0,0,0.06);
+  --wb-menu-activebar: #cfcfcf;
+
+  /* PANEL */
+  --wb-bg:   #eeeeee;
+  --wb-text: #111111;
+  --wb-card: rgba(0,0,0,0.06);
+  --wb-icon-filter: grayscale(100%) brightness(0.3);
+}
