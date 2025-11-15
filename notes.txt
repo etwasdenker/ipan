@@ -1,6 +1,10 @@
 $env:DATABASE_URL = "postgresql://ipan:Khir52eFhdv298H@localhost:5432/ipan_base"
 
 http://localhost:5173/ - ссылка на Frontend
+http://localhost:5173/_lab?id=main_carcass-v1&reset_mc=1
+
+cd C:\.code\.ipan\frontend\ipan
+pnpm dev 
 
 python -m http.server 5500
 http://localhost:5500/index.html - ссылка на каркас
@@ -60,6 +64,8 @@ ipan_uic (UI Containers)
 3.4.1. 3taux_uic
 3.4.2. 3aux_uic
 3.4.3. 3baux_uic
+
+
 
 Источники и TONES
 

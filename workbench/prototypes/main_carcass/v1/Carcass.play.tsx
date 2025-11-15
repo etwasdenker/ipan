@@ -1,41 +1,36 @@
 import * as React from "react";
-import { Box } from "@mui/material";
-import MainCarcassShell, { type CarcassConfig } from "./MainCarcassShell";
-import cfgUrl from "./config/main_carcass.config.json?url";
+import MainCarcassShell, { CarcassAreasConfig } from "./MainCarcassShell";
+import cfg from "./config/main_carcass.config.json";
 
-export default function CarcassPlay() {
-  const [cfg, setCfg] = React.useState<CarcassConfig | null>(null);
-  const [err, setErr] = React.useState<string | null>(null);
+const CONFIG = cfg as CarcassAreasConfig;
 
+function useResetOnce() {
   React.useEffect(() => {
-    (async () => {
-      try {
-        const res = await fetch(cfgUrl, { cache: "no-store" });
-        const json = await res.json();
-        setCfg(json);
-      } catch (e: any) {
-        setErr(`main_carcass — ошибка конфига: ${e?.message || e}`);
-      }
-    })();
+    const url = new URL(window.location.href);
+    if (url.searchParams.get("reset_mc") === "1") {
+      Object.keys(localStorage)
+        .filter((k) => k.startsWith("mc."))
+        .forEach((k) => localStorage.removeItem(k));
+      url.searchParams.delete("reset_mc");
+      window.history.replaceState({}, "", url.toString());
+    }
   }, []);
+}
 
-  if (err) {
-    return <Box sx={{ position:"fixed", inset:0, display:"grid", placeItems:"center", color:"var(--wb-app-text)" }}>{err}</Box>;
-  }
-  if (!cfg) {
-    return <Box sx={{ position:"fixed", inset:0, display:"grid", placeItems:"center", color:"var(--wb-app-text)" }}>Загрузка main_carcass…</Box>;
-  }
+export default function MainCarcassPlay() {
+  useResetOnce();
 
-  return (
-    <MainCarcassShell
-      config={cfg}
-      slots={{
-        headerLeft:  <span style={{ opacity:.6 }}>logo / back / refresh</span>,
-        headerRight: <span style={{ opacity:.6 }}>user · db · date/time</span>,
-        left:        <span style={{ opacity:.6 }}>← сюда позже встанет main_menu</span>,
-        main:        <span style={{ opacity:.6 }}>рабочая область</span>,
-        right:       <span style={{ opacity:.6 }}>правая колонка (опционально)</span>,
-      }}
-    />
-  );
+  // пример: включить/выключить 2middle_uic через query (?no_middle=1)
+  const url = new URL(window.location.href);
+  const noMiddle = url.searchParams.get("no_middle") === "1";
+  const runtimeCfg: CarcassAreasConfig = React.useMemo(() => {
+    const deep = JSON.parse(JSON.stringify(CONFIG)) as CarcassAreasConfig;
+    if (noMiddle) {
+      if (!deep.areas["2middle_uic"]) deep.areas["2middle_uic"] = {};
+      deep.areas["2middle_uic"].present = false;
+    }
+    return deep;
+  }, [noMiddle]);
+
+  return <MainCarcassShell cfg={runtimeCfg} />;
 }

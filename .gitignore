@@ -1,103 +1,44 @@
-# ==== IPAN Monorepo .gitignore (frontend React + backend FastAPI + workbench) ====
+﻿# Node / package managers
+**/node_modules/
+**/.pnp
+.pnp.*
+**/.turbo/
+**/.parcel-cache/
+**/.wireit/
 
-# --- OS / IDE ---
-.DS_Store
-Thumbs.db
-.idea/
-.vscode/*
-!.vscode/extensions.json
+# Build outputs / caches
+**/dist/
+**/build/
+**/.next/
+**/.nuxt/
+**/.svelte-kit/
+**/.cache/
+**/.vite/
+**/coverage/
+**/storybook-static/
 
-# --- Logs ---
-logs/
+# Env files
+.env
+.env.* 
+!.env.example
+
+# Logs
+logs
 *.log
-*.log.*
 npm-debug.log*
 yarn-debug.log*
-yarn-error.log*
 pnpm-debug.log*
 
-# --- Node / Frontend build caches ---
-node_modules/
-dist/
-build/
-.cache/
-.parcel-cache/
-.tmp/
-.temp/
-.vite/
-.eslintcache
-.stylelintcache
-
-# If there are nested frontend packages (e.g., frontend/ipan)
-frontend/**/node_modules/
-frontend/**/dist/
-frontend/**/build/
-frontend/**/.vite/
-frontend/**/.parcel-cache/
-frontend/**/.eslintcache
-
-# --- Python / Backend (FastAPI) ---
-__pycache__/
-*.py[cod]
-*.so
-*.pyd
-*.pyo
-*.pyd
-*.egg-info/
-.eggs/
-.python-version
-.venv/
-venv/
-pip-wheel-metadata/
-.pytest_cache/
-.mypy_cache/
-.ruff_cache/
-.coverage
-.coverage.*
-htmlcov/
-
-# If backend is nested (e.g., backend/app)
-backend/**/__pycache__/
-backend/**/.pytest_cache/
-backend/**/.mypy_cache/
-backend/**/.ruff_cache/
-backend/**/.coverage
-backend/**/htmlcov/
-backend/**/*.egg-info/
-
-# --- Workbench / Laboratory ---
-workbench/drafts/
-workbench/**/_snapshots/
-
-# --- Environment & secrets ---
-.env
-.env.*
-!.env.example
-env/.env*
-!env/.env.example
-# If you keep a template for dev env, keep it tracked:
-!env/.env.development.example
-
-# --- Temporary / swap files ---
-tmp/
-temp/
-~$*
+# IDE / OS
+.vscode/
+.idea/
+*.iml
+.DS_Store
+Thumbs.db
 *.swp
 *.swo
-*~
 
-# --- Coverage / reports ---
-coverage/
-*.lcov
-junit.xml
-
-# --- Local DB files ---
-*.sqlite
-*.sqlite3
-*.db
-
-# --- Misc archives (optional) ---
-*.tar
-*.tgz
-*.gz
-*.zip
+# Workbench scratch
+workbench/**/.local/
+workbench/**/.cache/
+workbench/**/tmp/

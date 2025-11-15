@@ -1,19 +1,123 @@
 {
-  "version": "1.0.0",
-  "ui": {
-    "headerHeight": 56,
-    "leftWidth": 280,
-    "leftCollapsedWidth": 72,
-    "rightWidth": 0,
-    "gap": 0,
-
-    "lineWidth": 1,
-    "lineColor": "rgba(255,255,255,0.12)",
-
-    "fontHref": "https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&display=swap",
-    "fontFamily": "'Amatic SC', system-ui, -apple-system, 'Segoe UI', Roboto, Arial"
+  "theme": { "mode": "dark" },
+  "tokens": {
+    "bg": {
+      "base": "#121212",
+      "left": "#191919",
+      "top": "#1c1c1c",
+      "panel": "#181818",
+      "mid": "#181818",
+      "win": "#161616"
+    },
+    "line": {
+      "defaultColor": "rgba(138,138,138,.9)",
+      "hoverColor": "rgba(255,255,255,.9)"
+    }
   },
-  "state": {
-    "leftCollapsed": false
+  "areas": {
+    "1left_uic": {
+      "line": { "side": "right", "thickness": 1 },
+      "size": { "width": 300 },
+      "resizable": {
+        "enabled": true,
+        "axis": "x",
+        "edge": "right",
+        "collapseTo": "left",
+        "min": 200,
+        "max": 600,
+        "snap": 2,
+        "lsKey": "mc.left_w"
+      }
+    },
+
+    "2tleft_uic": { "bgRef": "panel", "line": { "side": "bottom", "thickness": 1 }, "size": { "height": 49 } },
+    "2cleft_uic": { "bgRef": "left", "scroll": "y" },
+    "2bleft_uic": { "bgRef": "panel", "line": { "side": "top", "thickness": 1 }, "size": { "height": 52 } },
+
+    "1top_uic": {
+      "bgRef": "top",
+      "line": { "side": "bottom", "thickness": 1 },
+      "size": { "height": 60 },
+      "resizable": {
+        "enabled": true,
+        "axis": "y",
+        "edge": "bottom",
+        "collapseTo": "top",
+        "min": 0,
+        "max": 120,
+        "snap": 2,
+        "lsKey": "mc.top_h",
+        "overlayZ": 10000
+      }
+    },
+    "2browse_uic": { "bgRef": "top" },
+    "2tray_uic": { "bgRef": "top", "line": { "side": "left", "thickness": 1 }, "size": { "width": 240 } },
+
+    "1main_uic": {},
+
+    "2tabs_uic": {
+      "line": { "side": "bottom", "color": "rgba(138,138,138,.9)", "thickness": 1 },
+      "size": { "height": 56 }
+    },
+    "3ltabs_uic": { "bgRef": "top" },
+    "3rtabs_uic": { "bgRef": "top", "line": { "side": "left", "thickness": 1 }, "size": { "width": 200 } },
+
+    "2middle_uic": {
+      "present": true,
+      "bgRef": "mid",
+      "line": { "side": "right", "thickness": 1 },
+      "size": { "width": 280 },
+      "resizable": {
+        "enabled": true,
+        "axis": "x",
+        "edge": "right",
+        "collapseTo": "left",
+        "min": 0,
+        "max": 420,
+        "snap": 1,
+        "lsKey": "mc.midleft_w"
+      }
+    },
+    "3tmiddle_uic": {
+      "bgRef": "mid",
+      "line": { "side": "bottom", "thickness": 1 },
+      "size": { "height": 180 },
+      "scroll": "y",
+      "resizable": {
+        "enabled": true,
+        "axis": "y",
+        "edge": "bottom",
+        "collapseTo": "top",
+        "min": 120,
+        "max": 260,
+        "snap": 1,
+        "lsKey": "mc.midtop_h"
+      }
+    },
+    "3bmiddle_uic": { "bgRef": "mid", "scroll": "y" },
+
+    "2window_uic": {},
+    "3tcontent_uic": { "bgRef": "panel", "line": { "side": "bottom", "thickness": 1 }, "size": { "height": 64 } },
+    "3content_uic": { "bgRef": "win", "scroll": "both" },
+    "3bcontent_uic": { "bgRef": "panel", "line": { "side": "top", "thickness": 1 }, "size": { "height": 56 } },
+
+    "2right_uic": {
+      "bgRef": "mid",
+      "line": { "side": "left", "thickness": 1 },
+      "size": { "width": 260 },
+      "resizable": {
+        "enabled": true,
+        "axis": "x",
+        "edge": "left",
+        "collapseTo": "right",
+        "min": 0,
+        "max": 480,
+        "snap": 1,
+        "lsKey": "mc.right_w"
+      }
+    },
+    "3taux_uic": { "bgRef": "mid", "line": { "side": "bottom", "thickness": 1 }, "size": { "height": 0 } },
+    "3aux_uic": { "bgRef": "mid", "scroll": "y" },
+    "3baux_uic": { "bgRef": "mid", "line": { "side": "top", "thickness": 1 }, "size": { "height": 0 } }
   }
 }

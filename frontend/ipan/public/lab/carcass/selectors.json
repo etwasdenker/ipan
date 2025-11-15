@@ -1,0 +1,8 @@
+{
+  "header": "#top_ui_container, header, #header",
+  "left": "#left_ui_container, aside.left, #left",
+  "main": "#top_main_ui_container, main, #main",
+  "right": "#right_ui_container, aside.right, #right",
+  "lineColor": null,
+  "lineWidth": null
+}
