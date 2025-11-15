@@ -1,6 +1,6 @@
 // frontend/ipan/src/components/Layout.tsx
 import React, { useEffect, useState } from "react";
-import { Outlet, useLocation } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import HeaderBar from "./HeaderBar";
 import LeftSidebar from "./LeftSidebar";
 
@@ -43,6 +43,7 @@ export default function Layout() {
   }, []);
 
   const sidebarWidth = open ? wOpen : wClosed;
+  const navigate = useNavigate();
 
   // каркас: 2 колонки (меню | правая часть), 2 ряда (Header | контент)
   const rootStyle: React.CSSProperties = {
@@ -85,17 +86,31 @@ export default function Layout() {
     return [g, i];
   })();
 
+  const handleToggleSidebar = () => {
+    const next = !open;
+    setOpen(next);
+    localStorage.setItem("ui.sidebar.open", next ? "1" : "0");
+  };
+
+  const handleToggleTheme = () => {
+    const next = mainBg === "#141414" ? "#f5f5f5" : "#141414";
+    setMainBg(next);
+    localStorage.setItem("ui.main.bg", next);
+  };
+
+  const currentPath = location.pathname.replace(/^\//, "");
+
   return (
     <div style={rootStyle}>
       {/* Левая колонка */}
       <div style={sidebarSlot}>
         <LeftSidebar
-          isOpen={open}
-          onToggle={() => {
-            const next = !open;
-            setOpen(next);
-            localStorage.setItem("ui.sidebar.open", next ? "1" : "0");
-          }}
+          collapsed={!open}
+          onToggleCollapsed={handleToggleSidebar}
+          onToggleTheme={handleToggleTheme}
+          headerHeight={hHeader}
+          onNavigate={(key) => navigate(`/${key}`)}
+          currentPath={currentPath}
         />
       </div>
 

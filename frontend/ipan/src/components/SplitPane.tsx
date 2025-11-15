@@ -1,7 +1,7 @@
 // frontend/ipan/src/components/SplitPane.tsx
 import React from "react";
 
-type Props = { children?: React.ReactNode };
+type Props = React.PropsWithChildren<Record<string, unknown>>;
 
 // Ничего не рисуем и ничего не перехватываем.
 // Даже если страницы продолжают импортировать SplitPane/Divider — мы их глушим.

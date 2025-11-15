@@ -1,9 +1,32 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import path from 'node:path';
+import { createRequire } from 'node:module';
+
+const requireFromFrontend = createRequire(import.meta.url);
+
+function workbenchModuleResolver() {
+  return {
+    name: 'workbench-module-resolver',
+    enforce: 'pre' as const,
+    resolveId(source: string, importer: string | undefined) {
+      if (!importer) return null;
+      if (!importer.includes(`${path.sep}workbench${path.sep}`)) return null;
+      if (source.startsWith('.') || source.startsWith('/') || source.startsWith('data:')) {
+        return null;
+      }
+
+      try {
+        return requireFromFrontend.resolve(source);
+      } catch (error) {
+        return null;
+      }
+    },
+  };
+}
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [workbenchModuleResolver(), react()],
   resolve: {
     alias: {
       // алиас на Workbench (вне фронта)
